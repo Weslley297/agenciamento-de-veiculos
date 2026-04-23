@@ -1,0 +1,24 @@
+.owner-container {
+    .owner-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 400px;
+    }
+
+    .error-message {
+        color: red;
+        margin-top: 16px;
+    }
+
+    .success-message {
+        color: green;
+        margin-top: 16px;
+    }
+
+    .owner-list {
+        margin-top: 24px;
+        display: flex;
+        gap: 16px;
+    }
+}

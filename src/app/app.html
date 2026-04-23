@@ -1,0 +1,14 @@
+<section class="header">
+  <h1>Agenciamento de Veículos</h1>
+  <button matFab extended (click)="redirectTo('/owner')">
+    <mat-icon>person</mat-icon>
+    Proprietário
+  </button>
+  <button matFab extended (click)="redirectTo('/vehicle')">
+    <mat-icon>directions_car</mat-icon>
+    Veículo
+  </button>
+</section>
+<section class="content">
+  <router-outlet></router-outlet>
+</section>
