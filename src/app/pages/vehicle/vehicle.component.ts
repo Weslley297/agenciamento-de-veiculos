@@ -4,16 +4,13 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { AsyncPipe } from '@angular/common';
-import { VehicleFormInterface, VehicleInterface } from '../../shared/interface/vehicle.interface';
-import { Observable, of } from 'rxjs';
+import { VehicleFormInterface, VehicleInterface, VehicleListInterface } from '../../shared/interface/vehicle.interface';
 import { VehicleService } from '../../shared/services/vehicle.service';
 import { OwnerService } from '../../shared/services/owner.service';
-import { OwnerInterface } from '../../shared/interface/owner.interface';
+import { OwnerListInterface } from '../../shared/interface/owner.interface';
 import {MatSelectModule} from '@angular/material/select';
 import {MatTableModule} from '@angular/material/table';
 import {FormsModule} from '@angular/forms';
-
 
 @Component({
   selector: 'app-vehicle',
@@ -28,7 +25,6 @@ import {FormsModule} from '@angular/forms';
     MatSelectModule,
     MatTableModule,
     FormsModule,
-    AsyncPipe
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,9 +32,11 @@ export class VehicleComponent implements OnInit {
   public vehicleForm: FormGroup;
   public error: string | null = null;
   public success: string | null = null;
-  public list: Observable<VehicleInterface[]> = of();
-  public ownerList: Observable<OwnerInterface[]> = of();
+  public list: VehicleListInterface[] = [];
+  public ownerList: OwnerListInterface[] = []; 
   public selectedVehicleId: string | null = null;
+
+  public readonly displayedColumns: string[] = ['id', 'plate', 'model', 'year', 'ownerId', 'actions'];
 
   constructor(
     private readonly fb: FormBuilder,
@@ -100,7 +98,7 @@ export class VehicleComponent implements OnInit {
       plate: form.plate,
       model: form.model,
       year: form.year,
-      owner: form.ownerId
+      ownerId: form.ownerId
     });
   }
 

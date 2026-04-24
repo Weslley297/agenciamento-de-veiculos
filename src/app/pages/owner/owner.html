@@ -1,16 +1,10 @@
 <div class="owner">
   <h2>Proprietário</h2>
 
-  <form class="owner-form"
-    [formGroup]="ownerForm"
-    (ngSubmit)="submitForm()"
-  >
+  <form class="owner-form" [formGroup]="ownerForm" (ngSubmit)="submitForm()">
     <mat-form-field appearance="outline">
       <mat-label>Nome</mat-label>
-      <input matInput
-        formControlName="name"
-        placeholder="Digite o nome completo"
-      >
+      <input matInput formControlName="name" placeholder="Digite o nome completo">
       @if (ownerForm.get('name')?.hasError('required') && ownerForm.get('name')?.touched) {
       <mat-error>Nome é obrigatório</mat-error>
       }
@@ -24,10 +18,7 @@
 
     <mat-form-field appearance="outline">
       <mat-label>CPF</mat-label>
-      <input matInput
-        formControlName="cpf"
-        placeholder="000.000.000-00"
-      >
+      <input matInput formControlName="cpf" placeholder="000.000.000-00">
       @if (ownerForm.get('cpf')?.hasError('required') && ownerForm.get('cpf')?.touched) {
       <mat-error>CPF é obrigatório</mat-error>
       }
@@ -38,14 +29,8 @@
 
     <mat-form-field appearance="outline">
       <mat-label>Data de nascimento</mat-label>
-      <input matInput
-        formControlName="birthDate"
-        placeholder="MM/DD/YYYY"
-        [matDatepicker]="picker"
-      >
-      <mat-datepicker-toggle matIconSuffix
-        [for]="picker"
-      ></mat-datepicker-toggle>
+      <input matInput formControlName="birthDate" placeholder="MM/DD/YYYY" [matDatepicker]="picker">
+      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
       @if (ownerForm.get('birthDate')?.hasError('required') && ownerForm.get('birthDate')?.touched) {
       <mat-error>Data de nascimento é obrigatória</mat-error>
@@ -53,18 +38,11 @@
     </mat-form-field>
 
     <div class="owner-form-actions">
-      <button mat-raised-button
-        color="primary"
-        type="submit"
-        [disabled]="ownerForm.invalid"
-      >
+      <button mat-raised-button color="primary" type="submit" [disabled]="ownerForm.invalid">
         <mat-icon>save</mat-icon>
         Salvar
       </button>
-      <button mat-button
-        type="button"
-        (click)="resetForm()"
-      >
+      <button mat-button type="button" (click)="resetForm()">
         <mat-icon>clear</mat-icon>
         Limpar
       </button>
@@ -85,37 +63,40 @@
   </div>
   }
 
-  @for(item of list | async; track item.id) {
-  <div class="owner-list">
-    <div>
-      Id:
-      <p>{{ item.id }}</p>
-    </div>
-    <div>
-      Nome:
-      <p>{{ item.name }}</p>
-    </div>
-    <div>
-      CPF
-      <p>{{ item.cpf }}</p>
-    </div>
-    <div>
-      Data de nascimento
-      <p>{{ item.birthDate }}</p>
-    </div>
-    <div class="owner-list-actions">
-      <button mat-icon-button
-        [class.active]="selectedOwnerId === item.id"
-        (click)="toggleUpdateId(item)"
-      >
-        <mat-icon>edit</mat-icon>
-      </button>
-      <button mat-icon-button
-        (click)="deleteItem(item.id)"
-      >
-        <mat-icon>close</mat-icon>
-      </button>
-    </div>
-  </div>
-  }
+  <table mat-table [dataSource]="list" class="mat-elevation-z8">
+    <ng-container matColumnDef="id">
+      <th mat-header-cell *matHeaderCellDef> Id </th>
+      <td mat-cell *matCellDef="let element"> {{element.id}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="name">
+      <th mat-header-cell *matHeaderCellDef> Name </th>
+      <td mat-cell *matCellDef="let element"> {{element.name}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="cpf">
+      <th mat-header-cell *matHeaderCellDef> CPF </th>
+      <td mat-cell *matCellDef="let element"> {{element.cpf}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="birthDate">
+      <th mat-header-cell *matHeaderCellDef> Data de nascimento </th>
+      <td mat-cell *matCellDef="let element"> {{element.birthDate}} </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef></th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-icon-button [class.active]="selectedOwnerId === element.id" (click)="toggleUpdateId(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button (click)="deleteItem(element.id)">
+          <mat-icon>close</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
 </div>

@@ -7,9 +7,9 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatNativeDateModule } from '@angular/material/core';
 import { OwnerService } from '../../shared/services/owner.service';
-import { OwnerFormInterface, OwnerInterface } from '../../shared/interface/owner.interface';
-import { Observable, of } from 'rxjs';
-import { AsyncPipe } from '@angular/common';
+import { OwnerFormInterface, OwnerInterface, OwnerListInterface } from '../../shared/interface/owner.interface';
+import { MatTableModule } from '@angular/material/table';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-owner',
@@ -23,7 +23,7 @@ import { AsyncPipe } from '@angular/common';
     MatIconModule,
     MatButtonModule,
     MatNativeDateModule,
-    AsyncPipe
+    MatTableModule,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -31,8 +31,10 @@ export class OwnerComponent implements OnInit {
   public ownerForm: FormGroup;
   public error: string | null = null;
   public success: string | null = null;
-  public list: Observable<OwnerInterface[]> = of();
+  public list: OwnerListInterface[] = [];
   public selectedOwnerId: string | null = null;
+
+  public readonly displayedColumns: string[] = ['id', 'name', 'cpf', 'birthDate', 'actions'];
 
   constructor(
     private readonly fb: FormBuilder,
@@ -62,7 +64,7 @@ export class OwnerComponent implements OnInit {
     subscrition = this.selectedOwnerId ?
       this.ownerService.update(this.selectedOwnerId, owner) : this.ownerService.create(owner);
     subscrition.subscribe({
-      next: () => { 
+      next: () => {
         this.success = 'Proprietário salvo com sucesso!';
         this.refreshList();
         this.resetForm();

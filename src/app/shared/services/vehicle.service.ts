@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Observable, of, throwError } from 'rxjs';
-import { VehicleFormInterface, VehicleInterface } from '../interface/vehicle.interface';
+import { map, Observable, of, throwError } from 'rxjs';
+import { VehicleFormInterface, VehicleInterface, VehicleListInterface } from '../interface/vehicle.interface';
 import { BaseService } from './base.service';
 import { OwnerService } from './owner.service';
 
@@ -14,15 +14,31 @@ export class VehicleService extends BaseService {
     super();
   }
 
-  findAll(): Observable<VehicleInterface[]> {
+  findAll(): VehicleListInterface[] {
     const vehicles = this.getStorage<VehicleInterface>();
-    return of(vehicles);
+    return vehicles.map(vehicle => {
+      return {
+        id: vehicle.id,
+        plate: vehicle.plate,
+        model: vehicle.model,
+        year: vehicle.year,
+        owner: this.ownerService.findById(vehicle.ownerId)
+      } as VehicleListInterface;
+    });
   }
 
-  findById(id: string): Observable<VehicleInterface | undefined> {
+  findById(id: string): VehicleListInterface | undefined {
     const vehicles = this.getStorage<VehicleInterface>();
     const vehicle = vehicles.find(v => v.id === id);
-    return of(vehicle);
+    if (!vehicle) { return; }
+
+    return {
+      id: vehicle.id,
+      plate: vehicle.plate,
+      model: vehicle.model,
+      year: vehicle.year,
+      owner: this.ownerService.findById(vehicle.ownerId)
+    } as VehicleListInterface;
   }
 
   findByOwnerId(ownerId: string): Observable<VehicleInterface[]> {
@@ -31,7 +47,7 @@ export class VehicleService extends BaseService {
     return of(ownerVehicleInterfaces);
   }
 
-  create(vehicle:VehicleFormInterface): Observable<VehicleInterface> {
+  create(vehicle: VehicleFormInterface): Observable<VehicleInterface> {
     const vehicles = this.getStorage<VehicleInterface>();
     const now = new Date().toISOString();
 
@@ -55,7 +71,7 @@ export class VehicleService extends BaseService {
   update(id: string, vehicle: VehicleFormInterface): Observable<VehicleInterface> {
     const vehicles = this.getStorage<VehicleInterface>();
     const index = vehicles.findIndex(v => v.id === id);
-    
+
     if (index === -1) {
       return throwError(() => new Error('Veículo não encontrado'));
     }
