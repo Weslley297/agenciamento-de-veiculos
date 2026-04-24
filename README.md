@@ -2,6 +2,12 @@
 
 este projeto foi criado usando angular cli versão 21.2.8
 
+## Telas
+
+<img width="1236" height="637" alt="image" src="https://github.com/user-attachments/assets/8f2e1c1a-df83-4dc4-bc73-9da8c330ff59" />
+
+<img width="1232" height="755" alt="image" src="https://github.com/user-attachments/assets/937a30de-46f8-4237-b8a5-d756d8bea44d" />
+
 ## Intalação
 
 baixe o projeto para sua maquina
@@ -27,10 +33,4 @@ http://localhost:4200/
 
 ## Considerações finais
 
-Acabei não entregando a parte de veiculos, porem espero que levem em consideração o que foi feito para proprietário e imaginem que o mesmo seria replicado para veiculos com algumas alterações pontuais.
-
-Em questão estrurura optei por uma estrutura bem padrão a fim disso não consumir mito do meu tempo.
-
-Quanto a qualidade do código estou cinete de diversos pontos a melhorar, porem optei por entregar a maximo da demanda e respeitar o tempo limite.
-
-por fim, muito obrigado pela oportunidade.
+muito obrigado pela oportunidade.
