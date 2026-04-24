@@ -1,46 +1,38 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
-import { delay } from 'rxjs/operators';
 import { VehicleFormInterface, VehicleInterface } from '../interface/vehicle.interface';
+import { BaseService } from './base.service';
+import { OwnerService } from './owner.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class VehicleInterfaceService {
-  private readonly STORAGE_KEY = 'vehicles';
+export class VehicleService extends BaseService {
+  protected override STORAGE_KEY = 'vehicles';
 
-  private getStorage(): VehicleInterface[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  }
-
-  private setStorage(vehicles: VehicleInterface[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(vehicles));
-  }
-
-  private generateId(): string {
-    return crypto.randomUUID();
+  constructor(private ownerService: OwnerService) {
+    super();
   }
 
   findAll(): Observable<VehicleInterface[]> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     return of(vehicles);
   }
 
   findById(id: string): Observable<VehicleInterface | undefined> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     const vehicle = vehicles.find(v => v.id === id);
     return of(vehicle);
   }
 
   findByOwnerId(ownerId: string): Observable<VehicleInterface[]> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     const ownerVehicleInterfaces = vehicles.filter(v => v.ownerId === ownerId);
     return of(ownerVehicleInterfaces);
   }
 
   create(vehicle:VehicleFormInterface): Observable<VehicleInterface> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     const now = new Date().toISOString();
 
     const newVehicleInterface: VehicleInterface = {
@@ -61,9 +53,9 @@ export class VehicleInterfaceService {
   }
 
   update(id: string, vehicle: VehicleFormInterface): Observable<VehicleInterface> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     const index = vehicles.findIndex(v => v.id === id);
-
+    
     if (index === -1) {
       return throwError(() => new Error('Veículo não encontrado'));
     }
@@ -71,7 +63,6 @@ export class VehicleInterfaceService {
     const existingVehicleInterface = vehicles[index];
     const updatedVehicleInterface: VehicleInterface = {
       ...existingVehicleInterface,
-      ...vehicle,
       id: existingVehicleInterface.id,
       plate: vehicle.plate ? vehicle.plate : existingVehicleInterface.plate,
       model: vehicle.model?.trim() || existingVehicleInterface.model,
@@ -87,7 +78,7 @@ export class VehicleInterfaceService {
   }
 
   delete(id: string): Observable<void> {
-    const vehicles = this.getStorage();
+    const vehicles = this.getStorage<VehicleInterface>();
     const index = vehicles.findIndex(v => v.id === id);
 
     if (index === -1) {

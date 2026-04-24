@@ -1,0 +1,40 @@
+.vehicle {
+    &-form {
+        display: flex;
+        flex-direction: column;
+        gap: 16px;
+        max-width: 400px;
+    }
+
+    &-form-actions {
+        display: flex;
+        gap: 16px;
+    }
+
+    &-list {
+        margin-top: 32px;
+        display: inline-grid;
+        gap: 16px;
+        grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+        width: 100%;
+
+        &-actions {
+            display: flex;
+            gap: 16px;
+        }
+    }
+
+    &-error-message {
+        color: red;
+        margin-top: 16px;
+    }
+
+    &-success-message {
+        color: green;
+        margin-top: 16px;
+    }
+
+    .active {
+        background-color: green;
+    }
+}

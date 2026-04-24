@@ -1,42 +1,27 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, throwError } from 'rxjs';
 import { OwnerFormInterface, OwnerInterface } from '../interface/owner.interface';
+import { BaseService } from './base.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class OwnerService {
-  private readonly STORAGE_KEY = 'owners';
-
-  private getStorage(): OwnerInterface[] {
-    const data = localStorage.getItem(this.STORAGE_KEY);
-    return data ? JSON.parse(data) : [];
-  }
-
-  private setStorage(owners: OwnerInterface[]): void {
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify(owners));
-  }
-
-  private generateId(): string {
-    return crypto.randomUUID();
-  }
+export class OwnerService extends BaseService {
+  protected override STORAGE_KEY = 'owners';
 
   findAll(): Observable<OwnerInterface[]> {
-    const owners = this.getStorage();
+    const owners = this.getStorage<OwnerInterface>();
     return of(owners);
   }
 
-  findByCPF(cpf: string): Observable<OwnerInterface | undefined> {
-    const owners = this.getStorage();
-    const owner = owners.find(o => o.cpf === cpf);
+  findById(id: string): Observable<OwnerInterface | undefined> {
+    const owners = this.getStorage<OwnerInterface>();
+    const owner = owners.find(o => o.id === id);
     return of(owner);
   }
 
   create(owner: OwnerFormInterface): Observable<OwnerInterface> {
-    const owners = this.getStorage();
-    if (owners.some(o => o.cpf === owner.cpf)){
-      return this.update(owner);
-    }
+    const owners = this.getStorage<OwnerInterface>();
 
     const now = new Date().toISOString();
     const newOwnerInterface: OwnerInterface = {
@@ -55,9 +40,9 @@ export class OwnerService {
     return of(newOwnerInterface);
   }
 
-  update(owner: OwnerFormInterface): Observable<OwnerInterface> {
-    const owners = this.getStorage();
-    const index = owners.findIndex(o => o.cpf === owner.cpf);
+  update(id: string, owner: OwnerFormInterface): Observable<OwnerInterface> {
+    const owners = this.getStorage<OwnerInterface>();
+    const index = owners.findIndex(o => o.id === id);
 
     if (index === -1) {
       return throwError(() => new Error('Proprietário não encontrado'));
@@ -66,7 +51,6 @@ export class OwnerService {
     const existingOwnerInterface = owners[index];
     const updatedOwnerInterface: OwnerInterface = {
       ...existingOwnerInterface,
-      ...owner,
       cpf: owner.cpf || existingOwnerInterface.cpf,
       name: owner.name?.trim() || existingOwnerInterface.name,
       birthDate: owner.birthDate ?? existingOwnerInterface.birthDate,
@@ -81,7 +65,7 @@ export class OwnerService {
   }
 
   delete(id: string): Observable<void> {
-    const owners = this.getStorage();
+    const owners = this.getStorage<OwnerInterface>();
     const index = owners.findIndex(o => o.id === id);
 
     if (index === -1) {

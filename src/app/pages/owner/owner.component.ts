@@ -32,10 +32,11 @@ export class OwnerComponent implements OnInit {
   public error: string | null = null;
   public success: string | null = null;
   public list: Observable<OwnerInterface[]> = of();
+  public selectedOwnerId: string | null = null;
 
   constructor(
-    private fb: FormBuilder,
-    private ownerService: OwnerService
+    private readonly fb: FormBuilder,
+    private readonly ownerService: OwnerService
   ) {
     this.ownerForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(100)]],
@@ -48,29 +49,33 @@ export class OwnerComponent implements OnInit {
     this.refreshList();
   }
 
-  onSubmit(): void {
+  submitForm(): void {
     this.error = null;
     this.success = null;
 
     if (this.ownerForm.invalid) {
       return;
     }
+
+    let subscrition: Observable<OwnerInterface>;
     const owner: OwnerFormInterface = this.ownerForm.value;
-    this.ownerService.create(owner).subscribe({
-      next: () => {
+    subscrition = this.selectedOwnerId ?
+      this.ownerService.update(this.selectedOwnerId, owner) : this.ownerService.create(owner);
+    subscrition.subscribe({
+      next: () => { 
         this.success = 'Proprietário salvo com sucesso!';
         this.refreshList();
-        this.onReset();
+        this.resetForm();
       },
       error: (err) => this.error = err.message
     });
   }
 
-  onReset(): void {
+  resetForm(): void {
     this.ownerForm.reset();
   }
 
-  onDelete(id: string): void {
+  deleteItem(id: string): void {
     this.ownerService.delete(id).subscribe({
       next: () => {
         this.refreshList();
@@ -78,8 +83,19 @@ export class OwnerComponent implements OnInit {
     });
   }
 
-  onUpdate(cpf: string): void {
-   this.ownerForm.patchValue({ cpf });
+  toggleUpdateId(form: OwnerInterface): void {
+    if (form.id == this.selectedOwnerId) {
+      this.selectedOwnerId = null;
+      this.ownerForm.reset();
+      return;
+    }
+
+    this.selectedOwnerId = form.id;
+    this.ownerForm.patchValue({
+      name: form.name,
+      cpf: form.cpf,
+      birthDate: form.birthDate,
+    });
   }
 
   private refreshList(): void {
